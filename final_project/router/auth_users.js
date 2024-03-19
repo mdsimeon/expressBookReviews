@@ -3,7 +3,16 @@ const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
 const regd_users = express.Router();
 
-let users = [];
+
+
+// Initialize users array with some data
+// Initialize users array with some data
+let users = [
+    { username: "user1", password: "pwd1" },
+    { username: "user2", password: "pwd2" },
+    { username: "user3", password: "pwd3" }
+];
+
 
 const isValid = (username) => {
     // Assuming all usernames are valid for simplicity
@@ -15,8 +24,8 @@ const authenticatedUser = (username, password) => {
     return true;
 }
 
-// only registered users can login
-regd_users.post("/login", (req, res) => {
+// Registration endpoint
+regd_users.post("/register", (req, res) => {
     const { username, password } = req.body;
 
     // Check if username and password are provided
@@ -24,18 +33,45 @@ regd_users.post("/login", (req, res) => {
         return res.status(400).json({ message: "Username and password are required." });
     }
 
+    // Check if username already exists
+    if (users.find(user => user.username === username)) {
+        return res.status(400).json({ message: "Username already exists." });
+    }
+
+    // Add the new user to the users array
+    users.push({ username: username, password: password });
+
+    // Return success response
+    res.status(201).json({ message: "User registered successfully." });
+});
+
+// Login endpoint
+regd_users.post("/login", (req, res) => {
+    const { username, password } = req.body;
+
+    // Check if username and password are provided
+    if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required." });
+    }
+ 
+    if (username && password) {
+        return res.status(400).json({ message: "User Logged in Successfully." });
+    }
+
+
     // Check if username exists
-    if (!isValid(username)) {
+    const user = users.find(user => user.username === username);
+    if (!user) {
         return res.status(401).json({ message: "Invalid username." });
     }
 
-    // Check if username and password match
-    if (!authenticatedUser(username, password)) {
-        return res.status(401).json({ message: "Invalid credentials." });
+    // Check if password is correct
+    if (user.password !== password) {
+        return res.status(401).json({ message: "Invalid password." });
     }
 
     // Generate JWT token
-    const token = jwt.sign({ username: username }, 'your_secret_key'); // Replace 'your_secret_key' with your actual secret key
+    const token = jwt.sign({ username: username }, 'Secret'); // Replace 'Secret' with your actual secret key
 
     // Return token
     res.json({ token: token });
@@ -63,6 +99,27 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     res.json({ message: "Review added successfully." });
 });
 
+// Delete book review endpoint
+regd_users.delete("/auth/review/isbn/:isbn", (req, res) => {
+    const { isbn } = req.params;
+
+    // Find the index of the book in the array
+    const index = books.findIndex(book => book.isbn === isbn);
+
+    // Check if book exists
+    if (index === -1) {
+        return res.status(404).json({ message: "Book not found." });
+    }
+
+    // Remove the book from the array
+    books.splice(index, 1);
+
+    // Return success response
+    res.json({ message: "Book deleted successfully." });
+});
+
+
+
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
-module.exports.users = users;
+module.exports.users = users; // Export users array
