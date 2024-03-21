@@ -1,7 +1,12 @@
+// auth_users.js
+
 const express = require('express');
 const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
 const regd_users = express.Router();
+const secretKey = "this_is_a_secret_key_used_for_jwt_token";
+
+
 
 
 
@@ -45,37 +50,7 @@ regd_users.post("/register", (req, res) => {
     res.status(201).json({ message: "User registered successfully." });
 });
 
-// Login endpoint
-regd_users.post("/login", (req, res) => {
-    const { username, password } = req.body;
 
-    // Check if username and password are provided
-    if (!username || !password) {
-        return res.status(400).json({ message: "Username and password are required." });
-    }
- 
-    if (username && password) {
-        return res.status(400).json({ message: "User Logged in Successfully." });
-    }
-
-
-    // Check if username exists
-    const user = users.find(user => user.username === username);
-    if (!user) {
-        return res.status(401).json({ message: "Invalid username." });
-    }
-
-    // Check if password is correct
-    if (user.password !== password) {
-        return res.status(401).json({ message: "Invalid password." });
-    }
-
-    // Generate JWT token
-    const token = jwt.sign({ username: username }, 'Secret'); // Replace 'Secret' with your actual secret key
-
-    // Return token
-    res.json({ token: token });
-});
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
@@ -100,6 +75,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 });
 
 // Delete book review endpoint
+// Delete book review endpoint
 regd_users.delete("/auth/review/isbn/:isbn", (req, res) => {
     const { isbn } = req.params;
 
@@ -115,11 +91,39 @@ regd_users.delete("/auth/review/isbn/:isbn", (req, res) => {
     books.splice(index, 1);
 
     // Return success response
-    res.json({ message: "Book deleted successfully." });
+    return res.json({ message: "Book review deleted successfully." });
 });
 
+// Login endpoint
+
+
+regd_users.post("/login", (req, res) => {
+    const { username, password } = req.body;
+
+    // Check if username and password are provided
+    if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required." });
+    }
+
+    // Check if username and password are correct
+    const user = users.find(user => user.username === username && user.password === password);
+    if (!user) {
+        return res.status(401).json({ message: "Invalid username or password." });
+    }
+
+    // Generate JWT token
+    // const token = jwt.sign({ username: user.username }, 'your_secret_key'); // Replace 'your_secret_key' with your actual secret key
+    const token = jwt.sign({ username: user.username }, secretKey);
+
+    // Return token
+    res.json({ token: token });
+});
 
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
 module.exports.users = users; // Export users array
+
+
+
+
