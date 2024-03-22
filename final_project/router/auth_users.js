@@ -175,50 +175,109 @@ regd_users.post("/login", (req, res) => {
 // auth.js
 
 // Define an authentication middleware function
+// Authentication middleware to ensure user is logged in
 function authenticateUser(req, res, next) {
-    // Check if the user is authenticated (You need to implement this logic)
-    if (req.session && req.session.username) { // Assuming you're using sessions for authentication
+    // Check if the user is authenticated
+    if (req.session && req.session.username) {
         // If authenticated, proceed to the next middleware or route handler
         next();
     } else {
         // If not authenticated, return a 401 Unauthorized response
-        res.status(401).json({ message: "Unauthorized" });
+        return res.status(401).json({ message: "Unauthorized" });
     }
 }
+
+module.exports = authenticateUser;
+// Route to add or modify a book review
+// regd_users.put('/review/:isbn', (req, res) => {
+//     const { isbn } = req.params;
+//     const { review } = req.query;
+//     const username = req.session.username; // Assuming username is stored in session
+
+//     // Check if review query parameter is provided
+//     if (!review) {
+//         return res.status(400).json({ message: "Review is required." });
+//     }
+
+//     // Check if the book exists
+//     if (!books[isbn]) {
+//         return res.status(404).json({ message: "Book not found." });
+//     }
+
+//     // Check if the user has already reviewed this book
+//     if (books[isbn].reviews[username]) {
+//         // If user has already reviewed, update the existing review
+//         books[isbn].reviews[username] = review;
+//         return res.json({ message: "Review updated successfully." });
+//     } else {
+//         // If user hasn't reviewed yet, add a new review
+//         books[isbn].reviews[username] = review;
+//         return res.json({ message: "Review added successfully." });
+//     }
+// });
+
+// Route to add or modify a book review
+regd_users.put('/review/:isbn', authenticateUser, (req, res) => {
+    const { isbn } = req.params;
+    const { review } = req.query;
+    const username = req.session.username;
+
+    // Check if review query parameter is provided
+    if (!review) {
+        return res.status(400).json({ message: "Review is required." });
+    }
+
+    // Check if the book exists
+    if (!books[isbn]) {
+        return res.status(404).json({ message: "Book not found." });
+    }
+
+    // Check if the user has already reviewed this book
+    if (books[isbn].reviews[username]) {
+        // If user has already reviewed, update the existing review
+        books[isbn].reviews[username] = review;
+        return res.json({ message: "Review updated successfully." });
+    } else {
+        // If user hasn't reviewed yet, add a new review
+        books[isbn].reviews[username] = review;
+        return res.json({ message: "Review added successfully." });
+    }
+});
 
 module.exports = authenticateUser;
 
 
 // Assuming you have a middleware function named authenticateUser
 
-regd_users.put("/auth/review/:isbn", authenticateUser, (req, res) => {
-    const { isbn } = req.params;
-    const { review } = req.body;
+// regd_users.put("/auth/review/:isbn", authenticateUser, (req, res) => {
+//     const { isbn } = req.params;
+//     const { review } = req.body;
 
-    // Check if review is provided
-    if (!review) {
-        return res.status(400).json({ message: "Review is required." });
-    }
+//     // Check if review is provided
+//     if (!review) {
+//         return res.statu2s(400).json({ message: "Review is required." });
+//     }
 
-    // Check if book exists
-    if (!books[isbn]) {
-        return res.status(404).json({ message: "Book not found." });
-    }
+//     // Check if book exists
+//     if (!books[isbn]) {
+//         return res.status(404).json({ message: "Book not found." });
+//     }
 
-    // Add or update review
-    if (!books[isbn].reviews) {
-        books[isbn].reviews = [];
-    }
-    books[isbn].reviews.push(review);
+//     // Add or update review
+//     if (!books[isbn].reviews) {
+//         books[isbn].reviews = [];
+//     }
+//     books[isbn].reviews.push(review);
 
-    // Return success response
-    res.json({ message: "Review added successfully." });
-});
+//     // Return success response
+//     res.json({ message: "Review added successfully." });
+// });
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
 module.exports.users = users; // Export users array
 
+module.exports = authenticateUser;
 
 
 

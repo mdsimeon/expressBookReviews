@@ -204,5 +204,84 @@ public_users.get('/review/:isbn', function (req, res) {
     return res.status(200).json({ reviews: book.reviews });
 });
 
+// //TASK 10
+
+// const axios = require('axios');
+
+// // Function to get the list of books available in the shop using Promise callbacks
+// function getBooksUsingPromises() {
+//     return new Promise((resolve, reject) => {
+//         axios.get('https://msimeon-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/')
+//             .then(response => {
+//                 resolve(response.data);
+//             })
+//             .catch(error => {
+//                 reject(error);
+//             });
+//     });
+// }
+
+// // Example usage:
+// getBooksUsingPromises()
+//     .then(books => {
+//         console.log('List of books available:', books);
+//     })
+//     .catch(error => {
+//         console.error('Error fetching books:', error);
+//     });
+
+// //TASK 11
+
+// const axios = require('axios');
+
+// // Function to get book details based on ISBN using Promise callbacks
+// function getBookDetailsByISBNUsingPromises(isbn) {
+//     return new Promise((resolve, reject) => {
+//         axios.get(`https://msimeon-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/books/1`)
+//             .then(response => {
+//                 resolve(response.data);
+//             })
+//             .catch(error => {
+//                 reject(error);
+//             });
+//     });
+// }
+
+// // Function to get book details based on Author using Promise callbacks
+// function getBookDetailsByAuthorUsingPromises(author) {
+//     return new Promise((resolve, reject) => {
+//         axios.get(`https://msimeon-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/books?author=Unknown`)
+//             .then(response => {
+//                 resolve(response.data);
+//             })
+//             .catch(error => {
+//                 reject(error);
+//             });
+//     });
+// }
+
+// // Function to get book details based on Title using Promise callbacks
+// function getBookDetailsByTitleUsingPromises(title) {
+//     return new Promise((resolve, reject) => {
+//         axios.get(`https://msimeon-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/books?title=$Things Fall Apart`)
+//             .then(response => {
+//                 resolve(response.data);
+//             })
+//             .catch(error => {
+//                 reject(error);
+//             });
+//     });
+// }
+
+// module.exports = {
+//     getBookDetailsByISBNUsingPromises,
+//     getBookDetailsByAuthorUsingPromises,
+//     getBookDetailsByTitleUsingPromises,
+//     getBookDetailsByISBNUsingAsyncAwait,
+//     getBookDetailsByAuthorUsingAsyncAwait,
+//     getBookDetailsByTitleUsingAsyncAwait
+// };
+
+
 
 module.exports.general = public_users;
